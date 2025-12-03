@@ -51,7 +51,7 @@ public class BookStorage {
                 String[] headerParts = line.split(",", -1);
                 String lastColumn = headerParts.length >= 5 ? cleanField(headerParts[4]).toLowerCase() : "category";
                 boolean hasCategoryColumn = lastColumn.equals("category");
-                boolean hasCallNumberColumn = lastColumn.equals("callnumber") || lastColumn.equals("청구기호");
+                boolean hasCallNumberColumn = lastColumn.equals("category") || lastColumn.equals("카테고리");
 
                 while ((line = reader.readLine()) != null) {
                     if (line.trim().isEmpty()) continue;
@@ -71,16 +71,16 @@ public class BookStorage {
                     }
 
                     books.add(new Book(
-                            parts[0],
-                            parts[1],
-                            parts[2],
-                            parts[3],
-                            category
+                            parts[0], // 도서명
+                            parts[1], // 저자
+                            parts[2], // 출판사
+                            parts[3], // ISBN
+                            category // 카테고리
                     ));
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load books from CSV", e);
+            throw new RuntimeException("CSV 불러오기 중 오류가 발생했습니다.", e);
         }
     }
 
@@ -105,7 +105,7 @@ public class BookStorage {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to save books to CSV", e);
+            throw new RuntimeException("CSV 파일에 도서를 저장하지 못했습니다", e);
         }
     }
 

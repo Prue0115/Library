@@ -30,7 +30,7 @@ public class Book {
                 "저  자 : " + author + "\n" +
                 "출판사 : " + publisher + "\n" +
                 "I S B N : " + isbn + "\n" +
-                "카테고리 : " + category + "\n" +
+                "카테고리1 : " + category + "\n" +
                 "--------------------------------------";
     }
 }

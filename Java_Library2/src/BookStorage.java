@@ -49,9 +49,15 @@ public class BookStorage {
                 if (line == null) return;
 
                 while ((line = reader.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+
                     String[] parts = line.split(",", -1);
 
                     if (parts.length < 5) continue;
+
+                    for (int i = 0; i < 5; i++) {
+                        parts[i] = parts[i].trim();
+                    }
 
                     books.add(new Book(
                             parts[0],
@@ -100,17 +106,17 @@ public class BookStorage {
     }
 
     private static Path resolveDefaultCsvPath() {
-        Path workingDirCsv = Paths.get("books.csv");
-        if (Files.exists(workingDirCsv)) {
-            return workingDirCsv;
+        Path current = Paths.get("").toAbsolutePath();
+
+        while (current != null) {
+            Path candidate = current.resolve("books.csv");
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+            current = current.getParent();
         }
 
-        Path projectRootCsv = Paths.get("Java_Library2", "books.csv");
-        if (Files.exists(projectRootCsv)) {
-            return projectRootCsv;
-        }
-
-        return workingDirCsv;
+        return Paths.get("books.csv");
     }
 
     private String sanitize(String value) {

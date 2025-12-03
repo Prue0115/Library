@@ -50,6 +50,8 @@ public class BookSearcher {
         if (callNumber == null || callNumber.isBlank()) return "";
 
         String digits = callNumber.replaceAll("[^0-9]", "");
+        digits = digits.replaceFirst("^0+", "");
+
         if (digits.isEmpty()) return "";
 
         return switch (digits.charAt(0)) {

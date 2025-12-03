@@ -37,34 +37,22 @@ public class BookSearcher {
 
         if (targetCategory.isEmpty()) return result;
 
+        String target = targetCategory.toLowerCase();
+
         for (Book book : storage.getBooks()) {
-            String category = classifyByCallNumber(book.getCallNumber());
-            if (!category.isEmpty() && category.contains(targetCategory)) {
+            String category = normalizeCategory(book.getCategory());
+            String normalized = category.toLowerCase();
+
+            if (!normalized.isEmpty() && normalized.contains(target)) {
                 result.add(book);
             }
         }
         return result;
     }
 
-    private String classifyByCallNumber(String callNumber) {
-        if (callNumber == null || callNumber.isBlank()) return "";
+    private String normalizeCategory(String category) {
+        if (category == null) return "";
 
-        String digits = callNumber.replaceAll("[^0-9]", "");
-        digits = digits.replaceFirst("^0+", "");
-
-        if (digits.isEmpty()) return "";
-
-        return switch (digits.charAt(0)) {
-            case '1' -> "철학";
-            case '2' -> "종교";
-            case '3' -> "사회과학";
-            case '4' -> "자연과학";
-            case '5' -> "기술과학";
-            case '6' -> "예술";
-            case '7' -> "어학";
-            case '8' -> "문학";
-            case '9' -> "역사";
-            default -> "";
-        };
+        return category.trim();
     }
 }

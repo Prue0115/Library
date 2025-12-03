@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BookStorage {
 
-    private static final String HEADER = "title,author,publisher,isbn,callNumber";
+    private static final String HEADER = "title,author,publisher,isbn,category";
 
     private final Path csvPath;
     private final List<Book> books = new ArrayList<>();
@@ -48,6 +48,11 @@ public class BookStorage {
                 String line = reader.readLine(); // header
                 if (line == null) return;
 
+                String[] headerParts = line.split(",", -1);
+                String lastColumn = headerParts.length >= 5 ? headerParts[4].trim().toLowerCase() : "category";
+                boolean hasCategoryColumn = lastColumn.equals("category");
+                boolean hasCallNumberColumn = lastColumn.equals("callnumber") || lastColumn.equals("청구기호");
+
                 while ((line = reader.readLine()) != null) {
                     if (line.trim().isEmpty()) continue;
 
@@ -59,12 +64,18 @@ public class BookStorage {
                         parts[i] = parts[i].trim();
                     }
 
+                    String category = parts[4];
+
+                    if (!hasCategoryColumn && hasCallNumberColumn) {
+                        category = classifyByCallNumber(category);
+                    }
+
                     books.add(new Book(
                             parts[0],
                             parts[1],
                             parts[2],
                             parts[3],
-                            parts[4]
+                            category
                     ));
                 }
             }
@@ -89,7 +100,7 @@ public class BookStorage {
                             sanitize(book.getAuthor()),
                             sanitize(book.getPublisher()),
                             sanitize(book.getIsbn()),
-                            sanitize(book.getCallNumber())));
+                            sanitize(book.getCategory())));
                     writer.newLine();
                 }
             }
@@ -103,6 +114,28 @@ public class BookStorage {
             Files.createDirectories(csvPath.getParent());
         }
         Files.write(csvPath, (HEADER + System.lineSeparator()).getBytes());
+    }
+
+    private String classifyByCallNumber(String callNumber) {
+        if (callNumber == null || callNumber.isBlank()) return "";
+
+        String digits = callNumber.replaceAll("[^0-9]", "");
+        digits = digits.replaceFirst("^0+", "");
+
+        if (digits.isEmpty()) return "";
+
+        return switch (digits.charAt(0)) {
+            case '1' -> "철학";
+            case '2' -> "종교";
+            case '3' -> "사회과학";
+            case '4' -> "자연과학";
+            case '5' -> "기술과학";
+            case '6' -> "예술";
+            case '7' -> "어학";
+            case '8' -> "문학";
+            case '9' -> "역사";
+            default -> "";
+        };
     }
 
     private static Path resolveDefaultCsvPath() {

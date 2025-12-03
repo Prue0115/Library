@@ -118,10 +118,10 @@ public class Main {
                     System.out.print("ISBN: ");
                     String isbn = sc.nextLine();
 
-                    System.out.print("청구기호: ");
-                    String callNumber = sc.nextLine();
+                    System.out.print("카테고리: ");
+                    String category = sc.nextLine();
 
-                    storage.addBook(new Book(title, author, publisher, isbn, callNumber));
+                    storage.addBook(new Book(title, author, publisher, isbn, category));
                     System.out.println("도서가 저장되었습니다. (CSV 반영됨)");
                 }
 

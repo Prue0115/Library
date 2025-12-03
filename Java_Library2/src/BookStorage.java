@@ -49,7 +49,7 @@ public class BookStorage {
                 if (line == null) return;
 
                 String[] headerParts = line.split(",", -1);
-                String lastColumn = headerParts.length >= 5 ? headerParts[4].trim().toLowerCase() : "category";
+                String lastColumn = headerParts.length >= 5 ? cleanField(headerParts[4]).toLowerCase() : "category";
                 boolean hasCategoryColumn = lastColumn.equals("category");
                 boolean hasCallNumberColumn = lastColumn.equals("callnumber") || lastColumn.equals("청구기호");
 
@@ -61,7 +61,7 @@ public class BookStorage {
                     if (parts.length < 5) continue;
 
                     for (int i = 0; i < 5; i++) {
-                        parts[i] = parts[i].trim();
+                        parts[i] = cleanField(parts[i]);
                     }
 
                     String category = parts[4];
@@ -136,6 +136,19 @@ public class BookStorage {
             case '9' -> "역사";
             default -> "";
         };
+    }
+
+    private String cleanField(String value) {
+        if (value == null) return "";
+
+        String cleaned = value.replace("\uFEFF", "").trim();
+
+        if ((cleaned.startsWith("\"") && cleaned.endsWith("\"")) ||
+                (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+            cleaned = cleaned.substring(1, cleaned.length() - 1).trim();
+        }
+
+        return cleaned;
     }
 
     private static Path resolveDefaultCsvPath() {

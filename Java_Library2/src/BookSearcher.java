@@ -37,22 +37,46 @@ public class BookSearcher {
 
         if (targetCategory.isEmpty()) return result;
 
-        String target = targetCategory.toLowerCase();
-
         for (Book book : storage.getBooks()) {
-            String category = normalizeCategory(book.getCategory());
-            String normalized = category.toLowerCase();
+            List<String> categories = splitCategories(book.getCategory());
 
-            if (!normalized.isEmpty() && normalized.contains(target)) {
-                result.add(book);
+            for (String category : categories) {
+                if (category.equalsIgnoreCase(targetCategory)) {
+                    result.add(book);
+                    break;
+                }
             }
         }
         return result;
     }
 
-    private String normalizeCategory(String category) {
-        if (category == null) return "";
+    private List<String> splitCategories(String rawCategory) {
+        List<String> categories = new ArrayList<>();
 
-        return category.trim();
+        if (rawCategory == null || rawCategory.isBlank()) return categories;
+
+        String cleaned = rawCategory
+                .replace("\uFEFF", "")
+                .replace("\"", "")
+                .replace("'", "")
+                .trim();
+
+        if (cleaned.isEmpty()) return categories;
+
+        String[] parts = cleaned.split("[\\|/,]\\s*|⁄|/", -1);
+
+        for (String part : parts) {
+            String candidate = part.trim();
+
+            if (!candidate.isEmpty()) {
+                categories.add(candidate);
+            }
+        }
+
+        if (categories.isEmpty()) {
+            categories.add(cleaned);
+        }
+
+        return categories;
     }
 }

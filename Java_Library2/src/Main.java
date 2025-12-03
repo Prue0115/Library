@@ -9,8 +9,6 @@ public class Main {
         BookStorage storage = new BookStorage();
         BookSearcher searcher = new BookSearcher(storage);
 
-        storage.sampleBooks();
-
         while (true) {
             System.out.println("--------------------------------------");
             System.out.println("    도서 검색/단과대학별 도서 추천");
@@ -108,7 +106,6 @@ public class Main {
                     }
                 }
                 case "3" -> {
-                    System.out.println("카테고리 : 철학, 종교, 사회과학, 자연과학, 기술과학, 예술, 어학, 문학, 역사"); //카테고리 보기
                     System.out.print("도서명: ");
                     String title = sc.nextLine();
 
@@ -118,14 +115,14 @@ public class Main {
                     System.out.print("출판사: ");
                     String publisher = sc.nextLine();
 
+                    System.out.print("ISBN: ");
+                    String isbn = sc.nextLine();
+
                     System.out.print("청구기호: ");
                     String callNumber = sc.nextLine();
 
-                    System.out.print("카테고리: ");
-                    String category = sc.nextLine();
-
-                    storage.addBook(new Book(title, author, publisher, callNumber, category));
-                    System.out.println("도서가 저장되었습니다.");
+                    storage.addBook(new Book(title, author, publisher, isbn, callNumber));
+                    System.out.println("도서가 저장되었습니다. (CSV 반영됨)");
                 }
 
                 case "4" -> {

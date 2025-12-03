@@ -26,23 +26,44 @@ public class BookSearcher {
         List<Book> result = new ArrayList<>();
 
         String targetCategory = switch (college) {
-            case "공과대학" -> "기술과학";
-            case "인문사회대학" -> "철학";            // 단과대학 : 경상대학, 인문사회대학, 공과대학, 자연과학대학, 예쑬대학, 보건의료과학대학, AI·SW융합대학
-            case "자연과학대학" -> "자연";            // 카테고리 : 철학, 종교, 사회과학, 자연과학, 기술과학, 예술, 어학, 문학, 역사
+            case "공과대학", "AI·SW융합대학" -> "기술과학";
+            case "인문사회대학" -> "철학";
+            case "자연과학대학" -> "자연과학";
             case "예술대학" -> "예술";
-            case "경상대학" -> "경영";
+            case "경상대학" -> "사회과학";
             case "보건의료과학대학" -> "의학";
-            case "AI·SW융합대학" -> "기술과학";
             default -> "";
         };
 
         if (targetCategory.isEmpty()) return result;
 
         for (Book book : storage.getBooks()) {
-            if (book.getCategory().contains(targetCategory)) {
+            String category = classifyByCallNumber(book.getCallNumber());
+            if (!category.isEmpty() && category.contains(targetCategory)) {
                 result.add(book);
             }
         }
         return result;
+    }
+
+    private String classifyByCallNumber(String callNumber) {
+        if (callNumber == null || callNumber.isBlank()) return "";
+
+        String digits = callNumber.replaceAll("[^0-9]", "");
+        if (digits.isEmpty()) return "";
+
+        return switch (digits.charAt(0)) {
+            case '0' -> "총류";
+            case '1' -> "철학";
+            case '2' -> "종교";
+            case '3' -> "사회과학";
+            case '4' -> "자연과학";
+            case '5' -> "기술과학";
+            case '6' -> "예술";
+            case '7' -> "어학";
+            case '8' -> "문학";
+            case '9' -> "역사";
+            default -> "";
+        };
     }
 }

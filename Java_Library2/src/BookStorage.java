@@ -100,11 +100,17 @@ public class BookStorage {
     }
 
     private static Path resolveDefaultCsvPath() {
+        Path workingDirCsv = Paths.get("books.csv");
+        if (Files.exists(workingDirCsv)) {
+            return workingDirCsv;
+        }
+
         Path projectRootCsv = Paths.get("Java_Library2", "books.csv");
-        if (Files.isDirectory(projectRootCsv.getParent())) {
+        if (Files.exists(projectRootCsv)) {
             return projectRootCsv;
         }
-        return Paths.get("books.csv");
+
+        return workingDirCsv;
     }
 
     private String sanitize(String value) {
